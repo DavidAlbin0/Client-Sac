@@ -1,0 +1,33 @@
+<section class="inicio">
+
+    <h1>Archivo de <br> <span>Proveedores</span></h1>
+    <div class="login" *ngIf="identidad =='{}'">
+
+
+        <form #loginForm="ngForm" (ngSubmit)="onSubmit()">
+            <h2>Iniciar Sesión</h2>
+            <input type="text" name="usuario" #usuario="ngModel" [(ngModel)]="user.usuario" id="" placeholder="Usuario" required maxlength="13" minlength="8">
+            <span *ngIf="!usuario.valid && usuario.touched" class="rojo">
+                    Es obligatorio el usuario
+                </span>
+            <input type="password" name="password" #password="ngModel" [(ngModel)]="user.password" placeholder="Contraseña" required>
+            <span *ngIf="!password.valid && password.touched" class="rojo">
+                    Es obligatoria la contraseña
+                </span>
+            <a href="#" (click)="olvidar()">¿Olvidaste la contraseña?</a>
+            <input type="submit" value="Ingresar" [disabled]="!loginForm.form.valid">
+
+        </form>
+        <div class="alert verde" *ngIf="status == 'success'">
+            Identificado correctamente
+        </div>
+        <div class="alert rojo" *ngIf="status == 'error'">
+            No te has podido identificar correctamente, revisa tus credenciales de acceso
+        </div>
+
+        <a href="#" class="newVendor" [routerLink]="['/registro']">¿Eres nuevo proveedor? Registrate aquí</a>
+    </div>
+
+
+    <!-- <div class="circle"></div> -->
+</section>

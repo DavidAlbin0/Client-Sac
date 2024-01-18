@@ -1,0 +1,108 @@
+<section class="registro" *ngIf="identity.rol != 'proveedor'">
+
+
+    <h1>{{title}}<br> <span>Proveedores</span></h1>
+
+
+
+    <div class="register">
+        <form #vendorForm="ngForm" (ngSubmit)="onSubmit(vendorForm)">
+            <div class="boton">
+                <label for="rfc">Rfc</label>
+                <input type="text" name="rfc" id="rfc" #rfc="ngModel" [(ngModel)]="vendor.rfc" maxlength="13" minlength="12" (change)="valid()" required>
+                <span *ngIf="!rfc.valid && rfc.touched || vendor.rfc.trim() == ''" class="rojo">
+                        Rfc incorrecto
+                    </span>
+            </div>
+            <div class="boton">
+                <label for="regP">Registro patronal</label>
+                <input type="text" id="regP" name="regP" #regP="ngModel" [(ngModel)]="vendor.registroPatronal" maxlength="11" minlength="11">
+                <span *ngIf="!regP.valid || regP.touched && (vendor.registroPatronal.trim().length > 0 && vendor.registroPatronal.trim().length <11 ) " class="rojo">
+                        Registro patronal incorrecto
+                    </span>
+            </div>
+            <div class="boton">
+                <label for="razonS">Razón social</label>
+                <input type="text" id="razonS" name="razonS" #razonS="ngModel" [(ngModel)]="vendor.razonSocial" required>
+                <span *ngIf="!razonS.valid && razonS.touched || vendor.razonSocial.trim() == ''" class="rojo">
+                        Razón social incorrecto
+                    </span>
+            </div>
+            <div class="boton">
+                <label for="tipoP">Tipo de proveedor</label>
+                <select id="tipoP" name="tipoP" #tipoP="ngModel" [(ngModel)]="vendor.tipoProveedor" required>
+                        <option value="ingeniería">INGENIERÍA</option>
+                        <option value="estudios mecánica de suelos">ESTUDIOS MECÁNICA DE SUELOS</option>
+                        <option value="estudios topografía">ESTUDIOS TOPOGRAFÍA</option>
+                        <option value="otros">OTROS</option>
+                    </select>
+                <span *ngIf="!tipoP.valid && tipoP.touched && vendor.tipoProveedor != ''" class="rojo">
+                        Tipo de proveedor incorrecto
+                    </span>
+            </div>
+            <div class="boton">
+                <label for="regimenF">Régimen fiscal</label>
+                <select id="regimenF" name="regimenF" #regimenF="ngModel" [(ngModel)]="vendor.regimenFiscal" required>
+                        <option value="fisica">Persona Física</option>
+                        <option value="moral">Persona Moral</option>
+                     
+                    </select>
+                <span *ngIf="!regimenF.valid && regimenF.touched" class="rojo">
+                        Régimen fiscal incorrecto
+                    </span>
+            </div>
+
+
+            <div class="boton">
+                <label for="datosC">Nombre del contacto</label>
+                <input type="text" id="datosC" name="datosC" #datosC="ngModel" [(ngModel)]="vendor.nombreContacto" required>
+                <span *ngIf="!datosC.valid && datosC.touched || vendor.nombreContacto.trim() == ''" class="rojo">
+                        Nombre del contacto incorrecto
+                    </span>
+            </div>
+            <div class="boton">
+                <label for="correo">Correo</label>
+                <input type="email" id="correo" name="correo" #correo="ngModel" [(ngModel)]="vendor.correo" required email>
+                <span *ngIf="!correo.valid && correo.touched" class="rojo">
+                        Correo incorrecto
+                    </span>
+            </div>
+            <div class="boton">
+                <label for="telefono">Teléfono del contacto</label>
+                <input type="number" id="telefono" name="telefono" #telefono="ngModel" [(ngModel)]="vendor.telefono" min="1000000000" max="9999999999" required>
+                <span *ngIf="!telefono.valid && telefono.touched" class="rojo">
+                        Teléfono incorrecto
+                    </span>
+            </div>
+            <div class="boton">
+                <label for="tipoEmpresa">Empresa</label>
+                <select id="tipoEmpresa" class="bton" name="tipoEmpresa" #tipoEmpresa="ngModel" [(ngModel)]="vendor.empresa" required>
+                        <option value="sacmag">SACMAG</option>
+                        <option value="supervisa">SUPERVISA</option>
+                        <option value="cordina">CORDINA</option>
+                        <option value="geoambiente">GEOAMBIENTE</option>
+                        <option value="control">CONTROL</option>
+                        <option value="epesa">EPESA</option>
+                        <option value="consulte">CONSULTE</option>
+                        <option value="ingenial">INGENIAL</option>
+                        <option value="supter">SUPTER</option>
+                    </select>
+                <span *ngIf="!tipoEmpresa.valid && tipoEmpresa.touched || vendor.empresa[0]== ''  " class="rojo">
+                        Empresa incorrecto
+                    </span>
+            </div>
+            <div class="boton">
+                <label for="obser">Observaciones</label>
+                <textarea id="obser" name="obser" #obser="ngModel" [(ngModel)]="vendor.observaciones"></textarea>
+            </div>
+            <div [hidden]="captcha">
+                <re-captcha (resolved)="resolved($event)" siteKey="6LfcsbkhAAAAAP-F72zr3k_rDcN1S9OkwcNsdRXt"></re-captcha>
+            </div>
+
+            <input id="boton" type="submit" value="Enviar" [disabled]="!vendorForm.form.valid || captcha == ''">
+
+        </form>
+
+    </div>
+
+</section>

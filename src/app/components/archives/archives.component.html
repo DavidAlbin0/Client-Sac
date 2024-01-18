@@ -1,0 +1,454 @@
+<section class="archivos">
+    <div class="charge" *ngIf="charge">
+        <img src="../../../assets/img/cargando.gif" alt="cargando">
+        <p>El proceso llevará unos segundos, no recargues la página</p>
+    </div>
+    <h1>Archivos de <br><span>Proveedor</span></h1>
+    <div class="imagenes">
+        <a (click)="validar()" title="Validar archivos" *ngIf="archivos != null && archivos.validar!= true && identity.rol != 'proveedor' && identity.rol != 'usuariolec' && archivos._id !=''" style="background-color: rgb(5, 94, 5);">
+            <li class="fa fa-check"></li>
+        </a>
+        <a (click)="rechazar()" title="Rechazar archivos" *ngIf="archivos != null && archivos._id != '' && identity.rol != 'proveedor' && identity.rol != 'usuariolec'" style="background-color: rgb(192, 15, 15);">
+            <li class="fa fa-close"></li>
+        </a>
+        <!-- <a href="{{url+'archivos/'+ vendor['rfc']+ '.zip'}}" target="_blank" *ngIf="archivos._id != '' && identity.rol != 'proveedor' && identity.rol != 'usuariolec'" style="background-color: rgb(8, 123, 218);">
+            <li class="fa fa-folder-open"></li>
+        </a> -->
+        <a target="_blank" title="Ver historial de archivos" data-toggle="modal" data-target="#exampleModal" *ngIf="archives.length != 0 " style="background-color: rgb(8, 123, 218);">
+            <li class="fa fa-folder-open"></li>
+        </a>
+        <!-- <a (click)="habilitar()" *ngIf="archivos._id != '' && identity.rol != 'proveedor'"><img src="./../../../assets/img/editar.png" alt="" title="Editar Archivos"></a> -->
+    </div>
+    <div class="register">
+
+
+        <form #vendorForm="ngForm" (ngSubmit)="onSubmitU()">
+            <div class="input">
+                <label for="rfc">Rfc</label>
+                <input type="text" name="rfc" id="rfc" #rfc="ngModel" [(ngModel)]="vendor.rfc" maxlength="13" minlength="12" required readonly>
+                <span *ngIf="!rfc.valid && rfc.touched || vendor.rfc == ''" class="rojo">
+                    Rfc incorrecto
+                </span>
+            </div>
+            <div class="input">
+                <label for="regP">Registro patronal</label>
+                <input type="text" id="regP" #regP="ngModel" [(ngModel)]="vendor.registroPatronal" name="regP" maxlength="11">
+                <span *ngIf="!regP.valid || regP.touched && (vendor.registroPatronal.trim().length > 0 && vendor.registroPatronal.trim().length <11 )" class="rojo">
+                    Registro patronal incorrecto
+                </span>
+            </div>
+            <div class="input">
+                <label for="razonS">Razón social</label>
+                <input type="text" id="razonS" #razonS="ngModel" [(ngModel)]="vendor.razonSocial" name="razonS">
+                <span *ngIf="!razonS.valid && razonS.touched || vendor.razonSocial.trim() == ''" class="rojo">
+                    Razón social incorrecto
+                </span>
+            </div>
+            <div class="input">
+                <label for="datosC" class="bton">Nombre del contacto</label>
+                <input type="text" class="bton" id="datosC" name="datosC" #datosC="ngModel" [(ngModel)]="vendor.nombreContacto" required>
+                <span *ngIf="!datosC.valid && datosC.touched || vendor.nombreContacto.trim() == ''" class="rojo">
+                    Nombre del contacto incorrecto
+                </span>
+            </div>
+            <div class="input">
+                <label for="correo" class="bton">Correo del contacto</label>
+                <input type="email" class="bton" id="correo" name="correo" #correo="ngModel" (keyup)="changeData()" [(ngModel)]="vendor.correo" required email>
+                <span *ngIf="!correo.valid && correo.touched" class="rojo">
+                    Correo incorrecto
+                </span>
+            </div>
+            <div class="input">
+                <label for="telefono" class="bton">Teléfono del contacto</label>
+                <input type="number" class="bton" id="telefono" #telefono="ngModel" [(ngModel)]="vendor.telefono" name="telefono" min="1000000000" max="9999999999" required>
+                <span *ngIf="!telefono.valid && telefono.touched" class="rojo">
+                    Teléfono incorrecto
+                </span>
+            </div>
+
+            <div class="input">
+                <label for="tipoP" class="bton">Tipo de proveedor</label>
+                <select id="tipoP" class="bton" name="tipoP" #tipoP="ngModel" [(ngModel)]="vendor.tipoProveedor" required>
+                <option value="ingeniería">INGENIERÍA</option>
+                <option value="estudios mecánica de suelos">ESTUDIOS MECÁNICA DE SUELOS</option>
+                <option value="estudios topografía">ESTUDIOS TOPOGRAFÍA</option>
+                <option value="personal por administración">PERSONAL X ADMINISTRACIÓN</option>
+                <option value="otros">OTROS</option>
+            </select>
+                <span *ngIf="!tipoP.valid && tipoP.touched" class="rojo">
+                Tipo de proveedor incorrecto
+                </span>
+            </div>
+            <div class="input">
+                <label for="regimenF" class="bton">Régimen fiscal</label>
+                <select id="regimenF" class="bton" name="regimenF" #regimenF="ngModel" [(ngModel)]="vendor.regimenFiscal" required>
+                <option value="fisica">PERSONA FÍSICA</option>
+                <option value="moral">PERSONA MORAL</option>
+             
+            </select>
+                <span *ngIf="!regimenF.valid && regimenF.touched" class="rojo">
+                Régimen fiscal incorrecto
+            </span>
+            </div>
+            <div class="input">
+                <label for="fechaAltaProv" class="bton">Fecha alta</label>
+                <input type="text" class="bton" id="fechaAltaProv" name="fechaAltaProv" value="{{vendor.fechaAlta | date: 'dd-MM-yyyy'}}" readonly>
+            </div>
+
+
+
+            <div class="textarea">
+                <label for="obser" class="bton">Observaciones</label>
+                <textarea id="obser" class="bton" name="obser" #obser="ngModel" [(ngModel)]="vendor.observaciones"></textarea>
+            </div>
+            <input *ngIf="vendor.valido != '' && identity.rol != 'proveedor'" id="boton" class="bton" type="submit" value="Actualizar Información" [disabled]="!vendorForm.form.valid">
+
+        </form>
+        <div class="buttons">
+            <button class="button verde" *ngIf="vendor.valido == '' && identity.rol != 'proveedor' && identity.rol != 'usuariolec'" (click)="validateVendorInfo()">Validar Proveedor</button>
+            <button class="button rojo" *ngIf="vendor.valido == '' && identity.rol != 'proveedor' && identity.rol != 'usuariolec'">Borrar Proveedor</button>
+        </div>
+
+    </div>
+
+
+    <form #ArchivesForm="ngForm" *ngIf="vendor.valido != ''" (ngSubmit)="onSubmit()">
+        <span *ngIf="archivos != null && archivos._id != '' && archivos.validar== false" class="alert rojo"> Archivos enviados correspondientes al año {{currentYear}} pendientes de revisión </span>
+        <span *ngIf=" archivos != null  && archivos.validar== true" class="alert verde"> Archivos correspondientes al año {{currentYear}} aceptados</span>
+        <span *ngIf="archivos == null" class="alert negro"> Enviar archivos correspondientes al año {{currentYear}}</span>
+        <details>
+            <summary>1. Formato requisitado para alta del proveedor
+                <a class="gris" href="{{url+'archivos/'+ archivos.archivo1}}" title="{{archivos.archivo1}}" *ngIf="archivos != null && archivos.archivo1!=''" target="_blank">
+                    <img src="./../../../assets/img/doc.png">
+                </a>
+            </summary>
+            <input type="file" style="display: block;" class="file" accept="application/pdf" (change)="fileChangeEvent1($event, 'archivo1')">
+
+
+
+        </details>
+        <details>
+            <summary>2. Constancia de situación fiscal SAT
+                <a class="gris" href="{{url+'archivos/'+ archivos.archivo2}}" title="{{archivos.archivo2}}" *ngIf="archivos != null && archivos.archivo2!=''" target="_blank">
+                    <img src="./../../../assets/img/doc.png">
+                </a>
+            </summary>
+            <input type="file" placeholder="Seleccionar archivo" class="file" accept="application/pdf" (change)="fileChangeEvent2($event, 'archivo2')">
+        </details>
+        <details>
+            <summary>3. Alta imss registro patronal
+                <a class="gris" href="{{url+'archivos/'+ archivos.archivo3}}" title="{{archivos.archivo3}}" *ngIf="archivos != null && archivos.archivo3!=''" target="_blank">
+                    <img src="./../../../assets/img/doc.png">
+                </a>
+            </summary>
+            <input type="file" placeholder="Seleccionar archivo" class="file" accept="application/pdf" (change)="fileChangeEvent3($event, 'archivo3')">
+
+        </details>
+        <details>
+            <summary>4. Ine representante legal
+                <a class="gris" href="{{url+'archivos/'+ archivos.archivo4}}" *ngIf="archivos != null && archivos.archivo4!=''" title="{{archivos.archivo4}}" target="_blank">
+                    <img src="./../../../assets/img/doc.png">
+                </a>
+            </summary>
+            <input type="file" placeholder="Seleccionar archivo" class="file" accept="application/pdf" (change)="fileChangeEvent4($event, 'archivo4')">
+
+        </details>
+        <details class="ocultar">
+            <summary>5. Acta constitutiva y modificaciones(persona moral) y poder del representante legal
+                <a class="gris" href="{{url+'archivos/'+ archivos.archivo5}}" *ngIf="archivos != null && archivos.archivo5!=''" title="{{archivos.archivo5}}" target="_blank">
+                    <img src="./../../../assets/img/doc.png">
+                </a>
+            </summary>
+            <input type="file" placeholder="Seleccionar archivo" class="file" accept="application/pdf" (change)="fileChangeEvent5($event, 'archivo5')">
+
+
+        </details>
+        <details>
+            <summary>6. Comprobante de domicilio del domicilio fiscal vigente
+                <a class="gris" href="{{url+'archivos/'+ archivos.archivo6}}" *ngIf="archivos != null && archivos.archivo6!=''" target="_blank" title="{{archivos.archivo6}}">
+                    <img src="./../../../assets/img/doc.png">
+                </a>
+            </summary>
+            <input type="file" placeholder="Seleccionar archivo" class="file" accept="application/pdf" (change)="fileChangeEvent6($event ,'archivo6')">
+
+        </details>
+        <details>
+            <summary>7. Estado de cuenta con cuenta clabe, sólo caratula
+                <a class="gris" href="{{url+'archivos/'+ archivos.archivo7}}" *ngIf="archivos != null && archivos.archivo7!=''" target="_blank" title="{{archivos.archivo7}}">
+                    <img src="./../../../assets/img/doc.png">
+                </a>
+            </summary>
+            <input type="file" placeholder="Seleccionar archivo" class="file" accept="application/pdf" (change)="fileChangeEvent7($event ,'archivo7')">
+        </details>
+        <details>
+            <summary>8. Opinión de cumplimiento de 32D SAT
+                <a class="gris" href="{{url+'archivos/'+ archivos.archivo8}}" *ngIf="archivos != null && archivos.archivo8!=''" target="_blank" title="{{archivos.archivo8}}">
+                    <img src="./../../../assets/img/doc.png">
+                </a>
+            </summary>
+            <input type="file" placeholder="Seleccionar archivo" class="file" accept="application/pdf" (change)="fileChangeEvent8($event ,'archivo8')">
+
+        </details>
+        <details>
+            <summary>9. Opinión de cumplimiento de 32D IMSS
+                <a class="gris" href="{{url+'archivos/'+ archivos.archivo9}}" *ngIf="archivos != null && archivos.archivo9!=''" target="_blank" title="{{archivos.archivo9}}">
+                    <img src="./../../../assets/img/doc.png">
+                </a>
+            </summary>
+            <input type="file" placeholder="Seleccionar archivo" class="file" accept="application/pdf" (change)="fileChangeEvent9($event ,'archivo9')">
+        </details>
+        <details>
+            <summary>10. Opinión de cumplimiento de 32D INFONAVIT
+                <a class="gris" href="{{url+'archivos/'+ archivos.archivo10}}" *ngIf="archivos != null && archivos.archivo10!=''" target="_blank" title="{{archivos.archivo10}}">
+                    <img src="./../../../assets/img/doc.png">
+                </a>
+            </summary>
+            <input type="file" placeholder="Seleccionar archivo" class="file" accept="application/pdf" (change)="fileChangeEvent10($event,'archivo10')">
+
+        </details>
+        <details>
+            <summary>11. Curriculum de la empresa o persona fisica y/o cédula de las personas que realizarán el proyecto
+                <a class="gris" href="{{url+'archivos/'+ archivos.archivo11}}" *ngIf="archivos != null && archivos.archivo11!=''" target="_blank" title="{{archivos.archivo11}}">
+                    <img src="./../../../assets/img/doc.png">
+                </a>
+            </summary>
+            <input type="file" placeholder="Seleccionar archivo" class="file" accept="application/pdf" (change)="fileChangeEvent11($event,'archivo11')">
+        </details>
+        <details>
+            <summary>12. Registro de prestadoras de servicios especializados u obras especializadas (REPSE)
+                <a class="gris" href="{{url+'archivos/'+ archivos.archivo12}}" *ngIf="archivos != null && archivos.archivo12!=''" target="_blank" title="{{archivos.archivo12}}">
+                    <img src="./../../../assets/img/doc.png">
+                </a>
+            </summary>
+            <input type="file" placeholder="Seleccionar archivo" class="file" accept="application/pdf" (change)="fileChangeEvent12($event ,'archivo12')">
+        </details>
+        <details>
+            <summary>13. Especificaciones de calibración de equipos y certificaciones en caso de contar con equipo
+                <a class="gris" href="{{url+'archivos/'+ archivos.archivo13}}" *ngIf="archivos != null && archivos.archivo13!=''" target="_blank" title="{{archivos.archivo13}}">
+                    <img src="./../../../assets/img/doc.png">
+                </a>
+            </summary>
+            <input type="file" placeholder="Seleccionar archivo" class="file" accept="application/pdf" (change)="fileChangeEvent13($event ,'archivo13')">
+        </details>
+        <details>
+            <summary>14. Código de ética firmado por representante legal
+                <a class="gris" href="{{url+'archivos/'+ archivos.archivo14}}" *ngIf="archivos != null && archivos.archivo14!=''" target="_blank" title="{{archivos.archivo14}}">
+                    <img src="./../../../assets/img/doc.png">
+                </a>
+            </summary>
+            <input type="file" placeholder="Seleccionar archivo" class="file" accept="application/pdf" (change)="fileChangeEvent14($event,'archivo14')">
+        </details>
+        <details>
+            <summary>15. Última declaración anual y estados financieros del año(cualquiera de los últimos 3 meses)
+                <a class="gris" href="{{url+'archivos/'+ archivos.archivo15}}" *ngIf="archivos != null && archivos.archivo15!=''" target="_blank" title="{{archivos.archivo15}}">
+                    <img src="./../../../assets/img/doc.png">
+                </a>
+            </summary>
+            <input type="file" placeholder="Seleccionar archivo" class="file" accept="application/pdf" (change)="fileChangeEvent15($event,'archivo15')">
+        </details>
+
+        <input type="submit" name="" value="Enviar" [disabled]="!ArchivesForm.form.valid" *ngIf="archivos == null">
+
+
+
+    </form>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header d-flex align-items-center">
+                    <h5 class="modal-title" id="exampleModalLabel">Historial de Archivos <strong>{{vendor.razonSocial}}</strong></h5>
+
+
+                    <a href="{{url+'archivos/'+ vendor['rfc']+ vendor.supter.toString()+'.zip'}}" target="_blank" type="button" class="btn btn-primary mx-5">Descargar Archivos </a>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <li class="fa fa-close"></li>
+                
+              </button>
+                </div>
+                <div class="modal-body">
+
+                    <input class="form-control mr-sm-2" type="text" placeholder="Buscar Archivo" (keyup)="search(textVal.value)" #textVal>
+                    <table class="table" *ngIf="filtroValor == ''">
+                        <thead>
+                            <tr>
+                                <th scope="col">Fecha</th>
+                                <th scope="col">Nombre Archivo</th>
+                                <th scope="col">Ver</th>
+
+                            </tr>
+                        </thead>
+                        <tbody *ngFor="let archive of archives">
+                            <tr>
+                                <th scope="row">{{archive.year | date: 'dd-MM-yyyy'}}</th>
+                                <td>{{archive.archivo1 }}</td>
+                                <td>
+                                    <a href="{{url+'archivos/'+ archive.archivo1}}" target="_blank">
+                                        <li class="fa fa-arrow-right" style="cursor: pointer;"></li>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">{{archive.year | date: 'dd-MM-yyyy'}}</th>
+                                <td>{{archive.archivo2 }}</td>
+                                <td>
+                                    <a href="{{url+'archivos/'+ archive.archivo2}}" target="_blank">
+                                        <li class="fa fa-arrow-right" style="cursor: pointer;"></li>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">{{archive.year | date: 'dd-MM-yyyy'}}</th>
+                                <td>{{archive.archivo3 }}</td>
+                                <td>
+                                    <a href="{{url+'archivos/'+ archive.archivo3}}" target="_blank">
+                                        <li class="fa fa-arrow-right" style="cursor: pointer;"></li>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">{{archive.year | date: 'dd-MM-yyyy'}}</th>
+                                <td>{{archive.archivo4 }}</td>
+                                <td>
+                                    <a href="{{url+'archivos/'+ archive.archivo4}}" target="_blank">
+                                        <li class="fa fa-arrow-right" style="cursor: pointer;"></li>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">{{archive.year | date: 'dd-MM-yyyy'}}</th>
+                                <td>{{archive.archivo5 }}</td>
+                                <td>
+                                    <a href="{{url+'archivos/'+ archive.archivo5}}" target="_blank">
+                                        <li class="fa fa-arrow-right" style="cursor: pointer;"></li>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">{{archive.year | date: 'dd-MM-yyyy'}}</th>
+                                <td>{{archive.archivo6 }}</td>
+                                <td>
+                                    <a href="{{url+'archivos/'+ archive.archivo6}}" target="_blank">
+                                        <li class="fa fa-arrow-right" style="cursor: pointer;"></li>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">{{archive.year | date: 'dd-MM-yyyy'}}</th>
+                                <td>{{archive.archivo7 }}</td>
+                                <td>
+                                    <a href="{{url+'archivos/'+ archive.archivo7}}" target="_blank">
+                                        <li class="fa fa-arrow-right" style="cursor: pointer;"></li>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">{{archive.year | date: 'dd-MM-yyyy'}}</th>
+                                <td>{{archive.archivo8 }}</td>
+                                <td>
+                                    <a href="{{url+'archivos/'+ archive.archivo8}}" target="_blank">
+                                        <li class="fa fa-arrow-right" style="cursor: pointer;"></li>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">{{archive.year | date: 'dd-MM-yyyy'}}</th>
+                                <td>{{archive.archivo9 }}</td>
+                                <td>
+                                    <a href="{{url+'archivos/'+ archive.archivo9}}" target="_blank">
+                                        <li class="fa fa-arrow-right" style="cursor: pointer;"></li>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">{{archive.year | date: 'dd-MM-yyyy'}}</th>
+                                <td>{{archive.archivo10 }}</td>
+                                <td>
+                                    <a href="{{url+'archivos/'+ archive.archivo10}}" target="_blank">
+                                        <li class="fa fa-arrow-right" style="cursor: pointer;"></li>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">{{archive.year | date: 'dd-MM-yyyy'}}</th>
+                                <td>{{archive.archivo11 }}</td>
+                                <td>
+                                    <a href="{{url+'archivos/'+ archive.archivo11}}" target="_blank">
+                                        <li class="fa fa-arrow-right" style="cursor: pointer;"></li>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">{{archive.year | date: 'dd-MM-yyyy'}}</th>
+                                <td>{{archive.archivo12 }}</td>
+                                <td>
+                                    <a href="{{url+'archivos/'+ archive.archivo12}}" target="_blank">
+                                        <li class="fa fa-arrow-right" style="cursor: pointer;"></li>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">{{archive.year | date: 'dd-MM-yyyy'}}</th>
+                                <td>{{archive.archivo13 }}</td>
+                                <td>
+                                    <a href="{{url+'archivos/'+ archive.archivo13}}" target="_blank">
+                                        <li class="fa fa-arrow-right" style="cursor: pointer;"></li>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">{{archive.year | date: 'dd-MM-yyyy'}}</th>
+                                <td>{{archive.archivo14 }}</td>
+                                <td>
+                                    <a href="{{url+'archivos/'+ archive.archivo14}}" target="_blank">
+                                        <li class="fa fa-arrow-right" style="cursor: pointer;"></li>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">{{archive.year | date: 'dd-MM-yyyy'}}</th>
+                                <td>{{archive.archivo15 }}</td>
+                                <td>
+                                    <a href="{{url+'archivos/'+ archive.archivo15}}" target="_blank">
+                                        <li class="fa fa-arrow-right" style="cursor: pointer;"></li>
+                                    </a>
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+                    <table class="table" *ngIf="filtroValor != ''">
+                        <thead>
+                            <tr>
+                                <th scope="col">Nombre Archivo</th>
+                                <th scope="col">Ver</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let archive of dataFilter">
+                                <td>{{ archive }}</td>
+                                <td>
+                                    <a href="{{url+'archivos/'+ archive}}" target="_blank">
+                                        <li class="fa fa-arrow-right" style="cursor: pointer;"></li>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>

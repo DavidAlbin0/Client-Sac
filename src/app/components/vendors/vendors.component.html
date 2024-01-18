@@ -1,0 +1,31 @@
+<section class="proveedores">
+    <div class="circle"></div>
+
+
+
+
+    <h1>Proveedores<br><span>Registrados</span></h1>
+    <mat-form-field class="example-full-width" appearance="fill">
+
+        <input [formControl]="search" (input)="handleSearch(search.value)" matInput placeholder="Buscar Proveedor">
+        <i class="fa fa-search"></i>
+
+    </mat-form-field>
+    <div class="proveedor" *ngFor="let vendor of vendors | search:filtroValor ;let indexOf = index ">
+        <a [routerLink]="['/proveedor', vendor._id]">
+
+            <div class="text">
+                <h2>EMPRESA <br>{{vendor.razonSocial.toUpperCase()}}</h2>
+                <span *ngIf="vendor.verificado && vendor.valido != ''" class="verde">Archivos Válidos</span>
+                <span *ngIf="!vendor.verificado && vendor.valido != ''" class="rojo">Archivos No Válidos</span>
+                <span *ngIf="vendor.valido == ''" class="nuevo">Nuevo Proveedor</span>
+                <div *ngFor="let empresas of vendors[indexOf]['empresa']">
+                    <a class="empresa" href="#" *ngIf="(identity.rol == 'administrador' || identity.rol == 'contador') && empresas!= 'todas'">{{empresas}}</a>
+                </div>
+
+            </div>
+        </a>
+    </div>
+
+
+</section>
